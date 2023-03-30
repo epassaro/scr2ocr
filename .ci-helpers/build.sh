@@ -10,7 +10,7 @@ if [[ $(lsb_release -is) == "Ubuntu" ]]; then
                 --add-binary="tesseract-bin/tesseract:bin" \
                 --add-binary="tesseract-bin/libtesseract.so.4:." \
                 --add-binary="tesseract-bin/liblept.so.5:." \
-                --add-data="tesseract-bin/eng.traineddata:tessdata"
+                --add-data="tesseract-bin/spa.traineddata:tessdata"
 
 else
     echo "Not an Ubuntu distro, skipping 'scr2ocr' build"

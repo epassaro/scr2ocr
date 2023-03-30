@@ -21,14 +21,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install tesseract-ocr tesseract-ocr-eng \
+          sudo apt-get install tesseract-ocr tesseract-ocr-spa \
                 libtesseract-dev libleptonica-dev
 
       - name: Copy binaries
         run: |
           mkdir tesseract-bin && cd tesseract-bin
           cp /usr/bin/tesseract .
-          cp /usr/share/tesseract-ocr/4.00/tessdata/eng.traineddata .
+          cp /usr/share/tesseract-ocr/4.00/tessdata/spa.traineddata .
           cp /usr/lib/x86_64-linux-gnu/libtesseract.so ./libtesseract.so.4
           cp /usr/lib/x86_64-linux-gnu/liblept.so ./liblept.so.5
 

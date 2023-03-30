@@ -12,7 +12,7 @@ from PIL import ImageGrab
 REFRESH = 100  # in milliseconds
 WIDTH, HEIGHT = (280, 100)
 ALPHA = 0.55
-FLAGS = r'--oem 3 --psm 6'
+FLAGS = r'--oem 3 --psm 6 -l spa'
 
 if platform.system() == "Windows":
     pytesseract.pytesseract.tesseract_cmd = r'tesseract\tesseract.exe'
