@@ -1,0 +1,143 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+  linux-64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install tesseract-ocr tesseract-ocr-eng \
+                libtesseract-dev libleptonica-dev
+
+      - name: Copy binaries
+        run: |
+          mkdir tesseract-bin && cd tesseract-bin
+          cp /usr/bin/tesseract .
+          cp /usr/share/tesseract-ocr/4.00/tessdata/eng.traineddata .
+          cp /usr/lib/x86_64-linux-gnu/libtesseract.so ./libtesseract.so.4
+          cp /usr/lib/x86_64-linux-gnu/liblept.so ./liblept.so.5
+
+      - name: Setup environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+            miniforge-variant: Mambaforge
+            miniforge-version: latest
+            activate-environment: prenotami
+            use-mamba: true
+
+      - name: Update environment
+        run: mamba update -n prenotami --file conda-linux-64.lock
+
+      - name: Create binary packages
+        run: bash .ci-helpers/build.sh
+
+      - name: Zip folder
+        run: |
+          cd dist
+          zip -r scr2ocr-linux-64.zip scr2ocr
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: assets
+          path: dist/*.zip
+          if-no-files-found: error
+
+  win-64:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+            miniforge-variant: Mambaforge
+            miniforge-version: latest
+            activate-environment: prenotami
+            use-mamba: true
+
+      - name: Update environment
+        run: mamba update -n prenotami --file conda-win-64.lock
+
+      - name: Install gdown
+        run: pip install --upgrade gdown
+
+      - name: Download Tesseract
+        run: gdown ${{ secrets.FILE_ID }}
+
+      - name: Extract Tesseract
+        run: |
+          unzip tesseract-ocr-v4.1.0.20190314-win64.zip
+          mv tesseract-ocr-v4.1.0.20190314-win64 tesseract
+      
+      - name: Extract libraries
+        run: |
+          cd tesseract
+          gunzip *.gz
+
+      - name: Create binary package
+        run: .ci-helpers/build.bat
+
+      - name: Move folder
+        run: mv dist/scr2ocr scr2ocr
+
+      - name: Zip folder
+        uses: vimtor/action-zip@v1
+        with:
+          files: scr2ocr
+          recursive: false
+          dest: scr2ocr-win-64.zip
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: assets
+          path: scr2ocr-win-64.zip
+          if-no-files-found: error
+
+  release:
+    needs: [linux-64, win-64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Update tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: 'latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: assets
+          path: assets
+
+      - uses: ncipollo/release-action@v1
+        with:
+          name: 'continuous build'
+          tag: 'latest'
+          commit: 'main'
+          makeLatest: true
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: 'assets/*.zip'
+          body: 'Binaries are up-to-date with the `main` branch.'

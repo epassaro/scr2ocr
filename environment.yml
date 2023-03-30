@@ -1,0 +1,13 @@
+name: scr2ocr
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python =3.10
+  - pip
+  - pillow
+  - pyperclip
+  - pytesseract
+  - conda-lock
+  - pyinstaller
