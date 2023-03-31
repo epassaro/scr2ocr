@@ -24,8 +24,10 @@ else:
     os.environ["TESSDATA_PREFIX"] = "./tessdata"
     os.environ["LD_LIBRARY_PATH"] = "."
 
+    print("\nLoading JamSpell model...", end="")
     corr = jamspell.TSpellCorrector()
     corr.LoadLangModel("./jamspell/model.bin")
+    print(" done")
 
 def capture(corr=None):
     x, y = root.winfo_x(), root.winfo_y()
