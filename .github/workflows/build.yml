@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install tesseract-ocr tesseract-ocr-spa \
-                libtesseract-dev libleptonica-dev
+                libtesseract-dev libleptonica-dev swig3.0
 
       - name: Copy binaries
         run: |
@@ -48,6 +48,15 @@ jobs:
 
       - name: Update environment
         run: mamba update -n prenotami --file conda-linux-64.lock
+
+      - name: Install JamSpell
+        run: pip install git+https://github.com/bakwc/JamSpell.git@0.0.12
+
+      - name: Install gdown
+        run: pip install --upgrade gdown
+
+      - name: Download JamSpell model
+        run: gdown ${{ secrets.JAMSPELL_MODEL_ID }}
 
       - name: Create binary packages
         run: bash .ci-helpers/build.sh
@@ -85,7 +94,7 @@ jobs:
         run: pip install --upgrade gdown
 
       - name: Download Tesseract
-        run: gdown ${{ secrets.FILE_ID }}
+        run: gdown ${{ secrets.TESSERACT_ZIP_ID }}
 
       - name: Extract Tesseract
         run: |

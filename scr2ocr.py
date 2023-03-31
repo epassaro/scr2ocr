@@ -4,6 +4,7 @@ import os
 import platform
 from tkinter import Tk, Button
 
+import jamspell
 import pyperclip
 import pytesseract
 from PIL import ImageGrab
@@ -23,12 +24,18 @@ else:
     os.environ["TESSDATA_PREFIX"] = "./tessdata"
     os.environ["LD_LIBRARY_PATH"] = "."
 
-def capture():
+    corr = jamspell.TSpellCorrector()
+    corr.LoadLangModel("./jamspell/model.bin")
+
+def capture(corr=None):
     x, y = root.winfo_x(), root.winfo_y()
     w, h = root.winfo_width(), root.winfo_height()
 
     img = ImageGrab.grab(bbox=(x, y, x+w, y+h))
     text = pytesseract.image_to_string(img, config=FLAGS)
+
+    if corr:
+        text = corr.FixFragment(text)
 
     pyperclip.copy(text)
 
@@ -42,7 +49,7 @@ if __name__ == "__main__":
     root.wait_visibility(root)
     root.wm_attributes("-alpha", ALPHA)
 
-    button = Button(root, command=capture, relief="groove", borderwidth=2)
+    button = Button(root, command=lambda: capture(corr=corr), relief="groove", borderwidth=2)
     button.pack(side="top", expand=True)
 
     root.mainloop()
