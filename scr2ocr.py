@@ -9,23 +9,24 @@ import pyperclip
 import pytesseract
 from PIL import ImageGrab
 
-
 REFRESH = 100  # in milliseconds
 WIDTH, HEIGHT = (280, 100)
 ALPHA = 0.55
 FLAGS = r'--oem 3 --psm 6 -l spa'
 
+cwd = os.path.dirname(__file__)
 if platform.system() == "Windows":
-    pytesseract.pytesseract.tesseract_cmd = r'tesseract\tesseract.exe'
-    os.environ["TESSDATA_PREFIX"] = r'tesseract\tessdata'
+    pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "tesseract", "tesseract.exe"))
+    os.environ["TESSDATA_PREFIX"] = os.path.abspath(os.path.join(cwd, "tessdata"))
+    corr = None
 
 else:
-    pytesseract.pytesseract.tesseract_cmd = "./bin/tesseract"
-    os.environ["TESSDATA_PREFIX"] = "./tessdata"
-    os.environ["LD_LIBRARY_PATH"] = "."
+    pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "bin", "tesseract"))
+    os.environ["TESSDATA_PREFIX"] = os.path.abspath(os.path.join(cwd, "tessdata"))
+    os.environ["LD_LIBRARY_PATH"] = cwd
 
     print("\nLoading JamSpell model...", end="")
-    corr = jamspell.TSpellCorrector()
+    corr = jamspell.TSpellCorrector()   
     corr.LoadLangModel("./jamspell/model.bin")
     print(" done")
 
