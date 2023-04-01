@@ -6,7 +6,7 @@ channels:
 dependencies:
   - python =3.10
   - gxx =8.5  # [not win]
-  - swig =3   # [not win]
+  - swig =4   # [not win]
   - pip
   - pillow
   - pyperclip

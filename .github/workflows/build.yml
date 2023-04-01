@@ -50,7 +50,7 @@ jobs:
         run: mamba update -n prenotami --file conda-linux-64.lock
 
       - name: Install JamSpell
-        run: pip install git+https://github.com/bakwc/JamSpell.git@0.0.12
+        run: pip install git+https://github.com/bakwc/JamSpell.git#egg
 
       - name: Install gdown
         run: pip install --upgrade gdown
