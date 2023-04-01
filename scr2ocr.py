@@ -28,8 +28,12 @@ if platform.system() == "Windows":
 else:
     print("\nLoading JamSpell model...", end="")
     corr = jamspell.TSpellCorrector()   
-    corr.LoadLangModel("./jamspell/model.bin")
-    print(" done")
+    
+    if corr.LoadLangModel(os.path.join(cwd, "jamspell", "model.bin")):
+        print(" done")
+
+    else:
+        print(" not found")
 
     if not conda:
         pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "bin", "tesseract"))
