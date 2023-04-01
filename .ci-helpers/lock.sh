@@ -3,7 +3,7 @@
 set -e
 
 echo
-conda-lock lock -p linux-64 -p win-64
+conda-lock lock -f environment.yml
 
 echo
 conda-lock render conda-lock.yml
