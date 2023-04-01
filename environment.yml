@@ -5,13 +5,16 @@ channels:
 
 dependencies:
   - python =3.10
-  - gxx =8.5  # required by JamSpell
-  - swig =3 # required by JamSpell
+  - gxx =8.5  # [not win]
+  - swig =3   # [not win]
   - pip
   - pillow
   - pyperclip
   - pytesseract
-  - pip:
-    - git+https://github.com/bakwc/JamSpell.git@0.0.12
+  - tesseract
   - conda-lock
   - pyinstaller
+
+platforms:
+  - linux-64
+  - win-64

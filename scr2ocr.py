@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import platform
 from tkinter import Tk, Button
 
@@ -15,20 +16,25 @@ ALPHA = 0.55
 FLAGS = r'--oem 3 --psm 6 -l spa'
 
 cwd = os.path.dirname(__file__)
+conda = os.path.exists(os.path.join(sys.prefix, "conda-meta"))
+
 if platform.system() == "Windows":
-    pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "tesseract", "tesseract.exe"))
-    os.environ["TESSDATA_PREFIX"] = os.path.abspath(os.path.join(cwd, "tessdata"))
     corr = None
 
-else:
-    pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "bin", "tesseract"))
-    os.environ["TESSDATA_PREFIX"] = os.path.abspath(os.path.join(cwd, "tessdata"))
-    os.environ["LD_LIBRARY_PATH"] = cwd
+    if not conda:
+        pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "tesseract", "tesseract.exe"))
+        os.environ["TESSDATA_PREFIX"] = os.path.abspath(os.path.join(cwd, "tessdata"))
 
+else:
     print("\nLoading JamSpell model...", end="")
     corr = jamspell.TSpellCorrector()   
     corr.LoadLangModel("./jamspell/model.bin")
     print(" done")
+
+    if not conda:
+        pytesseract.pytesseract.tesseract_cmd = os.path.abspath(os.path.join(cwd, "bin", "tesseract"))
+        os.environ["TESSDATA_PREFIX"] = os.path.abspath(os.path.join(cwd, "tessdata"))
+        os.environ["LD_LIBRARY_PATH"] = cwd
 
 def capture(corr=None):
     x, y = root.winfo_x(), root.winfo_y()
