@@ -48,7 +48,7 @@ def capture(corr=None):
     raw_text = pytesseract.image_to_string(img, config=FLAGS)
     lines = raw_text.split("\n")
     lines = [line for line in lines if line != ""]
-    
+
     text = ""
     for line in lines:
         if text.endswith("-"):
@@ -59,6 +59,7 @@ def capture(corr=None):
     
     if corr:
         text = corr.FixFragment(text)
+        text = text.replace("- ", "")  # Extra hyphenated words may arise after spelling correction  
 
     pyperclip.copy(text)
 
