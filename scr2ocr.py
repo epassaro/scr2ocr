@@ -13,7 +13,7 @@ from PIL import ImageGrab
 REFRESH = 100  # in milliseconds
 WIDTH, HEIGHT = (280, 100)
 ALPHA = 0.55
-FLAGS = r'--oem 3 --psm 6 -l spa'
+FLAGS = r'--oem 3 --psm 1 -l spa'
 
 cwd = os.path.dirname(__file__)
 conda = os.path.exists(os.path.join(sys.prefix, "conda-meta"))
@@ -45,8 +45,18 @@ def capture(corr=None):
     w, h = root.winfo_width(), root.winfo_height()
 
     img = ImageGrab.grab(bbox=(x, y, x+w, y+h))
-    text = pytesseract.image_to_string(img, config=FLAGS)
+    raw_text = pytesseract.image_to_string(img, config=FLAGS)
+    lines = raw_text.split("\n")
+    lines = [line for line in lines if line != ""]
+    
+    text = ""
+    for line in lines:
+        if text.endswith("-"):
+            text = text.rstrip("-") + line
 
+        else:
+            text = text + " " + line
+    
     if corr:
         text = corr.FixFragment(text)
 
