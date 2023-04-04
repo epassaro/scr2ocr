@@ -51,7 +51,7 @@ Currently not tested, JamSpell is not supported. **Please do not open issues abo
 ## Authors
 - [@epassaro](https://github.com/epassaro)
 - [@agostinaf](https://github.com/agostinaf)
-- [@fitosb](https://github.com/fitosb)
+- [@fitosb](https://github.com/asimazbunzel)
 
 ## License
 ![This software is released under the MIT license](https://img.shields.io/github/license/epassaro/scr2ocr)
