@@ -57,6 +57,7 @@ if __name__ == "__main__":
     root = Tk()
     root.title("scr2ocr")
     root.geometry(f"{WIDTH}x{HEIGHT}")
+    root.attributes("-type", "utility")
 
     # Linux transparency workaround, try `root.wm_attributes('-transparentcolor', root["bg"])` on Windows
     root.wait_visibility(root)
